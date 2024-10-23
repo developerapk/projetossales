@@ -220,10 +220,13 @@
     display: none;
     position: fixed; /* Change to fixed */
     background-color: #f9f9f9;
-    min-width: 160px;
+    min-width: 200px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1000; /* Increase z-index */
     border-radius: 4px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
   .options-list button {
     color: black;
@@ -404,7 +407,7 @@
 </head>
 <body>
 <div class="container">
-  <h1>Escala Copom SP <span id="currentYear"></span></h1>
+  <h1>Escala de Equipes <span id="currentYear"></span></h1>
   <div id="credits">
     Criado por: Setor de Tecnologia COPOM.<br>
     Cap PM Alexandria, Sgt PM Ignácio, Cb PM Sales Lima, Cb PM Pivaro, Sd PM Botelho.
@@ -420,7 +423,7 @@
       <option value="D">Equipe D</option>
       <option value="E">Equipe E</option>
     </select>
-    <button onclick="updateSchedule()">GERAR</button>
+    <button onclick="updateSchedule()">OK</button>
     <button class="dark-mode-toggle" onclick="toggleDarkMode()">
       <span class="moon">🌙</span>
       <span class="sun">☀️</span>
@@ -451,7 +454,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const motivationalQuotes = [
-   "A persistência é o caminho do êxito.",
+  "A persistência é o caminho do êxito.",
     "O sucesso nasce do querer, da determinação e persistência em se chegar a um objetivo.",
     "Nada é impossível para aquele que persiste.",
     "O único lugar onde o sucesso vem antes do trabalho é no dicionário.",
@@ -590,11 +593,9 @@ function showOptionsModal(event) {
   const cell = event.target.closest('td'); // Get the clicked cell
   window.currentSelectedCell = cell; // Store reference to clicked cell globally
   const optionsList = document.getElementById('optionsList');
-  const rect = cell.getBoundingClientRect();
   
+  // Simply show the options list - it will be centered due to CSS
   optionsList.style.display = 'block';
-  optionsList.style.left = `${rect.left}px`;
-  optionsList.style.top = `${rect.bottom}px`;
 }
 
 function updateMotivationalQuote() {
@@ -645,7 +646,7 @@ function saveState() {
 }
 
 function loadSavedState() {
-  const year = document.getElementById('yearInput').value;
+  const year = parseInt(document.getElementById('yearInput').value);
   const savedState = localStorage.getItem(`scheduleState_${year}`);
   const globalSettings = JSON.parse(localStorage.getItem('scheduleGlobalSettings') || '{}');
   
@@ -655,16 +656,12 @@ function loadSavedState() {
 
   if (savedState) {
     const state = JSON.parse(savedState);
-    
-    if (state.team) {
-      document.getElementById('teamSelect').value = state.team;
-    }
 
-    // Only restore options if they match the current year
+    // Only restore options that match the current year exactly
     if (state.cellOptions) {
       setTimeout(() => {
         state.cellOptions.forEach(option => {
-          if (option.year === parseInt(year)) { // Only restore if year matches
+          if (option.year === year) { // Strict year comparison
             const tables = document.querySelectorAll('table');
             if (tables[option.month]) {
               const rows = tables[option.month].querySelectorAll('tr');
@@ -683,7 +680,11 @@ function loadSavedState() {
             }
           }
         });
-        highlightTeam(state.team);
+        // Apply team highlighting after options are restored
+        const selectedTeam = document.getElementById('teamSelect').value;
+        if (selectedTeam) {
+          highlightTeam(selectedTeam);
+        }
       }, 100);
     }
   }
@@ -699,14 +700,17 @@ function updateSchedule() {
     return;
   }
 
-  // Generate new schedule without restoring previous options
+  // Store current selected team
+  const selectedTeam = document.getElementById('teamSelect').value;
+
+  // Generate new schedule
   generateSchedule(year);
-  
-  // Load options specific to this year
+
+  // Load saved options for this specific year
   loadSavedState();
-  
-  // Apply team highlighting
-  highlightTeam(document.getElementById('teamSelect').value);
+
+  // Apply team highlighting after schedule is regenerated
+  highlightTeam(selectedTeam);
 }
 
 function toggleDarkMode() {

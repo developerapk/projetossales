@@ -57,18 +57,20 @@
     padding: 5px 0;
     text-align: center;
     margin-bottom: 10px;
+    position: relative; /* Add position relative */
+    width: 100%; /* Ensure full width */
     overflow: hidden;
-    white-space: nowrap;
-    box-sizing: border-box;
   }
   .motivational-quote span {
     display: inline-block;
+    white-space: nowrap; /* Keep text in single line */
     padding-left: 100%;
     animation: scroll-left 20s linear infinite;
+    width: auto; /* Let content determine width */
   }
   @keyframes scroll-left {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
+    100% { transform: translateX(-200%); } /* Increase to ensure full scroll */
   }
   /* Update the option watermark animation */
   td .option-watermark {
@@ -538,6 +540,7 @@ const motivationalQuotes = [
     "A persistência é o caminho do êxito.",
     "A verdadeira motivação vem de realização, desenvolvimento pessoal, satisfação no trabalho e reconhecimento."
 ];
+
 
 
 let selectedCell = null;

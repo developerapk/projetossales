@@ -1,462 +1,408 @@
 
-<html><head><base href="https://.io/infinite-team-schedule/">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Escala de Equipes Infinita com Frases Motivacionais</title>
+<html><head><base href="https://example.com/">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escala de Equipes</title>
+
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f5f5f5;
+}
 
+.calendar-container {
+  max-width: 1200px;
+  width: 100%;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.month-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.nav-button {
+  background: #006400;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background: #004d00;
+}
+
+.month-display {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.calendar {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calendar th, 
+.calendar td {
+  padding: 8px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+}
+
+td {
+  border: 1px solid #ddd;
+}
+
+.calendar th {
+  border: 1px solid #ddd;
+  background: #006400;
+  color: white;
+}
+
+.weekend {
+  background: #f0f0f0;
+}
+
+.today {
+  background: #e6f7ff;
+  font-weight: bold;
+}
+
+td.has-task {
+  border: 2px solid #ff00ff;
+  animation: neonPulse 1.5s infinite;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background: #121212;
+  color: white;
+}
+
+body.dark-mode .calendar-container {
+  background: #1e1e1e;
+  color: white;
+}
+
+body.dark-mode .calendar th {
+  background: #004d00;
+}
+
+body.dark-mode td {
+  border-color: #444;
+}
+
+body.dark-mode .weekend {
+  background: #2a2a2a;
+}
+
+body.dark-mode .today {
+  background: #1a3f55;
+}
+
+/* Task options styling */
+.task-options {
+  display: none;
+  position: absolute;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 100;
+  color: black;
+}
+
+body.dark-mode .task-options {
+  background: #333;
+  border-color: #444;
+  color: white;
+}
+
+.task-option {
+  padding: 8px 16px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.task-option:hover {
+  background: #f0f0f0;
+}
+
+body.dark-mode .task-option {
+  color: white;
+}
+
+body.dark-mode .task-option:hover {
+  background: #444;
+}
+
+.dark-mode-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #006400;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+body.dark-mode .dark-mode-toggle {
+  color: #90EE90;
+}
+
+.task-marker {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.8em;
+  padding: 2px 4px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  animation: floatText 3s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+.task-marker.expanded {
+  max-width: none;
+  white-space: normal;
+}
+
+.task-dejem { background: #ffa500; }
+.task-delegada { background: #ffa500; }
+.task-folga { background: #ffa500; }
+.task-troca { background: #ffa500; }
+.task-outros { background: #ffa500; }
+
+/* Year selection */
+.year-selection {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.year-input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 80px;
+}
+
+/* Credits section */
+.credits {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+}
+
+body.dark-mode .credits {
+  color: #aaa;
+}
+
+/* Motivational quote */
+.motivational-quote {
+  text-align: center;
+  margin: 20px 0;
+  font-style: italic;
+  color: #006400;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.motivational-quote span {
+  display: inline-block;
+  animation: scrollQuote 20s linear infinite;
+}
+
+@keyframes scrollQuote {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+body.dark-mode .motivational-quote {
+  color: #90EE90;
+}
+
+/* Custom text input modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+}
+
+body.dark-mode .modal-content {
+  background: #333;
+  color: white;
+}
+
+body.dark-mode .modal-content input {
+  background: #444;
+  color: white;
+  border: 1px solid #666;
+}
+
+body.dark-mode .modal-content button {
+  background: #555;
+  color: white;
+  border: 1px solid #666;
+}
+
+.team-highlight {
+  background: #ffe4b5 !important;
+}
+
+body.dark-mode .team-highlight {
+  background: #ffbf00 !important;  
+}
+
+.holiday-watermark {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  color: red;
+  font-style: italic;
+  pointer-events: none;
+  animation: floatText 3s ease-in-out infinite;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@keyframes floatText {
+  0% { transform: translateY(-50%) translateX(100%); }
+  100% { transform: translateY(-50%) translateX(-100%); }
+}
+
+@keyframes neonPulse {
+  0% { box-shadow: 0 0 5px #ff00ff, inset 0 0 5px #ff00ff; }
+  50% { box-shadow: 0 0 20px #ff00ff, inset 0 0 10px #ff00ff; }
+  100% { box-shadow: 0 0 5px #ff00ff, inset 0 0 5px #ff00ff; }
+}
+
+@media (max-width: 768px) {
   body {
-    font-family: 'Roboto', Arial, sans-serif;
-    margin: 0;
     padding: 10px;
-    background-color: #f0f0f0;
-    font-size: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    width: 100%;
-    max-width: 1080px;
-    margin: 0 auto;
   }
-  body.dark-mode {
-    background-color: #121212;
-    color: white;
-  }
-  .container {
-    width: 100%;
-    max-width: 1080px;
-    height: 1920px;
-    overflow-y: auto;
-    background-color: white;
-    border-radius: 8px;
+  
+  .calendar-container {
     padding: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    box-sizing: border-box;
   }
-  h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 10px;
+  
+  .calendar th,
+  .calendar td {
+    padding: 4px;
+    font-size: 14px;
   }
-  body.dark-mode h1 {
-    color: white;
-  }
-  #credits {
-    text-align: center;
-    color: #333; /* Dark gray/black for light mode */
-    margin-bottom: 10px;
-    font-size: 0.9em;
-  }
-  body.dark-mode #credits {
-    color: #FFD700; /* Yellow color for dark mode */
-  }
-  .motivational-quote {
-    font-size: 0.9em;
-    padding: 5px 0;
-    text-align: center;
-    margin-bottom: 10px;
-    position: relative; /* Add position relative */
-    width: 100%; /* Ensure full width */
-    overflow: hidden;
-  }
-  .motivational-quote span {
-    display: inline-block;
-    white-space: nowrap; /* Keep text in single line */
-    padding-left: 100%;
-    animation: scroll-left 20s linear infinite;
-    width: auto; /* Let content determine width */
-  }
-  @keyframes scroll-left {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-200%); } /* Increase to ensure full scroll */
-  }
-  /* Update the option watermark animation */
-  td .option-watermark {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    opacity: 0.3;
-    white-space: nowrap;
-    width: 100%;
-    overflow: hidden;
-    pointer-events: none; /* Prevent interference with cell clicks */
-  }
-  /* Ensure content stays in place */
-  td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-    height: 40px; /* Set fixed height */
-    position: relative;
-    overflow: hidden; /* Hide overflow content */
-    z-index: 1;
-  }
-  /* Remove the existing floatText animation since we're using scroll-left instead */
-  @keyframes floatText {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-5px); }
-    100% { transform: translateY(0px); }
-  }
-  /* Update the cell option styling */
-  td .option-watermark {
-    opacity: 0.3;
-    animation: scroll-left 20s linear infinite;
-  }
-  .dark-mode-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    padding: 5px 10px;
-    margin: 0 5px;
-    vertical-align: middle;
-  }
-  .dark-mode-toggle .sun {
-    display: none;
-  }
-  body.dark-mode .dark-mode-toggle .sun {
-    display: inline;
-  }
-  body.dark-mode .dark-mode-toggle .moon {
-    display: none;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-  }
-  th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-  }
-  body.dark-mode th {
-    background-color: #006400; /* Dark green */
-    color: white;
-  }
-  .controls {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  input, select, button {
-    margin: 0 5px;
-    padding: 5px;
-  }
-  button {
-    border-radius: 0 !important; /* Override any existing border-radius */
-  }
-  .highlight {
-    background-color: #006400 !important; /* Dark green */
-    color: white !important;
-  }
-  .weekend {
-    background-color: #f0f0f0;
-  }
-  body.dark-mode .weekend {
-    background-color: #2a2a2a;
-    color: #ffeb3b; /* Yellow color for weekend text */
-  }
-  .current-month {
-    font-weight: bold;
-  }
-  .current-day {
-    background-color: #e6f7ff;
-  }
-  .month-header {
-    background-color: #006400 !important; /* Dark green */
-    color: white !important;
-    font-size: 1.2em;
-    padding: 10px;
-    text-align: center;
-  }
-  body.dark-mode .container {
-    background-color: #1e1e1e;
-    color: #ffffff;
-  }
-  body.dark-mode th,
-  body.dark-mode td {
-    color: white;
-  }
-  body.dark-mode .current-day {
-    background-color: #1a3f55;
-  }
-  body.dark-mode .month-header {
-    background-color: #004d00 !important; /* Darker green for dark mode */
-  }
-  .watermark {
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-    font-size: 0.8em;
-    opacity: 0.5;
-  }
-  .tooltip {
-    visibility: hidden;
-    width: 120px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  td:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-  }
-  .options-list {
-    display: none;
-    position: fixed; /* Change to fixed */
-    background-color: #f9f9f9;
-    min-width: 200px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1000; /* Increase z-index */
-    border-radius: 4px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .options-list button {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    width: 100%;
-    text-align: left;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  .options-list button:hover {
-    background-color: #f1f1f1;
-  }
-  body.dark-mode .options-list {
-    background-color: #333;
-  }
-  body.dark-mode .options-list button {
-    color: white;
-  }
-  body.dark-mode .options-list button:hover {
-    background-color: #444;
-  }
-  #optionSelect option[value="DEJEM"] {
-    background-color: red;
-    color: white;
-  }
-  #optionSelect option[value="DELEGADA"] {
-    background-color: green;
-    color: white;
-  }
-  #optionSelect option[value="FOLGA MENSAL"] {
-    background-color: blue;
-    color: white;
-  }
-  #optionSelect option[value="TROCA DE SERVIÇO"] {
-    background-color: orange;
-    color: black;
-  }
-  #optionSelect option[value="OUTROS"] {
-    background-color: purple;
-    color: white;
-  }
-  #optionSelect option[value="CANCELAR"] {
-    background-color: yellow;
-    color: black;
-  }
-  td.option-selected {
-    position: relative;
-  }
-  @keyframes neonPulse {
-    0% { box-shadow: 0 0 5px #ff00ff, inset 0 0 5px #ff00ff; }
-    50% { box-shadow: 0 0 20px #ff00ff, inset 0 0 10px #ff00ff; }
-    100% { box-shadow: 0 0 5px #ff00ff, inset 0 0 5px #ff00ff; }
-  }
-  td.option-selected {
-    border: 2px solid #ff00ff;
-    animation: neonPulse 1.5s infinite;
-  }
-  td.option-dejem::after { border-color: red; }
-  td.option-delegada::after { border-color: green; }
-  td.option-folga-mensal::after { border-color: blue; }
-  td.option-troca-serviço::after { border-color: orange; }
-  td.option-outros::after { border-color: purple; }
-  @keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-  }
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.4);
-  }
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 90%;
-    max-width: 300px;
-    text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  body.dark-mode .modal-content {
-    background-color: #1e1e1e;
-    color: white;
-    border: 1px solid #444;
-  }
-  body.dark-mode .modal-content h3 {
-    color: white;
-  }
-  @media screen and (max-width: 768px) {
-    body {
-      padding: 5px;
-    }
-
-    .controls {
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .controls input,
-    .controls select,
-    .controls button {
-      width: 100%;
-      margin: 5px 0;
-    }
-
-    h1 {
-      font-size: 1.5em;
-    }
-
-    .month-header {
-      font-size: 1em;
-    }
-
-    .options-list {
-      width: 200px;
-      left: 50% !important;
-      transform: translateX(-50%);
-    }
-  }
-
-  @media screen and (max-width: 320px) {
-    table {
-      font-size: 11px;
-    }
-
-    th, td {
-      padding: 2px;
-      font-size: 11px;
-      height: 40px; /* Set fixed height */
-    }
-
-    .watermark {
-      font-size: 0.7em;
-    }
-  }
-
-  /* Add this to the existing CSS */
-  .team-highlight {
-    background-color: #ffd700 !important; /* Yellow */
-  }
-
-  body.dark-mode .team-highlight {
-    background-color: #b8860b !important; /* Darker yellow for dark mode */
-  }
-
-  /* Ensure columns have reasonable widths */
-  td:nth-child(1) { /* Dia */
-    width: 10%;
-  }
-  td:nth-child(2) { /* Dia da Semana */
-    width: 20%;
-  }
-  td:nth-child(3), /* Equipe Dia */
-  td:nth-child(4) { /* Equipe Noite */
-    width: 35%;
-  }
-  tbody tr:hover {
-    background-color: #f5f5f5;
-  }
-  body.dark-mode tbody tr:hover {
-    background-color: #2d2d2d;
-  }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>Escala de Equipes <span id="currentYear"></span></h1>
-  <div id="credits">
-    Criado por: Setor de Tecnologia COPOM.<br>
-    Cap PM Alexandria, Sgt PM Ignácio, Cb PM Sales Lima, Cb PM Pivaro, Sd PM Botelho.
-  </div>
-  <div class="motivational-quote" id="motivationalQuote"></div>
-  <div class="controls">
-    <input type="number" id="yearInput" placeholder="Ano" value="2024">
-    <select id="teamSelect">
-      <option value="">Escolha Equipe</option>
+
+<button class="dark-mode-toggle" onclick="toggleDarkMode()">&#x1f319;</button>
+
+<div class="calendar-container">
+  <div class="year-selection">
+    <input type="number" class="year-input" id="yearInput" value="2024" min="2024">
+    <button class="nav-button" onclick="updateYear()">Mudar Ano</button>
+    <select id="teamSelect" class="nav-button">
+      <option value>Escolha Equipe</option>
       <option value="A">Equipe A</option>
       <option value="B">Equipe B</option>
       <option value="C">Equipe C</option>
       <option value="D">Equipe D</option>
       <option value="E">Equipe E</option>
     </select>
-    <button onclick="updateSchedule()">OK</button>
-    <button class="dark-mode-toggle" onclick="toggleDarkMode()">
-      <span class="moon">🌙</span>
-      <span class="sun">☀️</span>
-    </button>
   </div>
-  <div id="scheduleContainer"></div>
+  
+  <div class="motivational-quote" id="motivationalQuote"></div>
+  
+  <div class="month-navigation">
+    <button class="nav-button" id="prevMonth">&lt;</button>
+    <div class="month-display" id="monthDisplay"></div>
+    <button class="nav-button" id="nextMonth">&gt;</button>
+  </div>
+  
+  <table class="calendar" id="calendar">
+    <thead>
+      <tr>
+        <th>Dia</th>
+        <th>Dia Semana</th>
+        <th>Equipe Dia</th>
+        <th>Equipe Noite</th>
+      </tr>
+    </thead>
+    <tbody id="calendarBody"></tbody>
+  </table>
+
+  <div class="credits">
+    Desenvolvido por: Setor de Tecnologia COPOM<br>
+    Cap PM Alexandria, Sgt PM Ign&#xe1;cio, Cb PM Sales Lima, Cb PM Pivaro, Sd PM Botelho
+  </div>
 </div>
 
-<div id="optionsList" class="options-list">
-  <button onclick="selectOption('DELEGADA')">DELEGADA</button>
-  <button onclick="selectOption('DEJEM')">DEJEM</button>
-  <button onclick="selectOption('TROCA DE SERVIÇO')">TROCA SERVIÇO</button>
-  <button onclick="selectOption('FOLGA MENSAL')">FOLGA MENSAL</button>
-  <button onclick="selectOption('OUTROS')">OUTROS</button>
-  <button onclick="selectOption('CANCELAR')">CANCELAR</button>
+<div id="taskOptions" class="task-options">
+  <div class="task-option" onclick="addTask(&apos;DEJEM&apos;)">DEJEM</div>
+  <div class="task-option" onclick="addTask(&apos;DELEGADA&apos;)">DELEGADA</div>
+  <div class="task-option" onclick="addTask(&apos;FOLGA&apos;)">FOLGA</div>
+  <div class="task-option" onclick="addTask(&apos;TROCA&apos;)">TROCA DE SERVI&#xc7;O</div>
+  <div class="task-option" onclick="showCustomTextInput()">OUTROS</div>
+  <div class="task-option" onclick="removeTask()">REMOVER</div>
 </div>
 
-<div id="customTextDialog" class="modal">
+<div id="customTextModal" class="modal">
   <div class="modal-content">
     <h3>Digite o texto personalizado</h3>
     <input type="text" id="customTextInput" minlength="5" maxlength="20">
-    <button onclick="saveCustomText()">Salvar</button>
-    <button onclick="closeCustomTextDialog()">Cancelar</button>
+    <button onclick="addCustomTask()">Salvar</button>
+    <button onclick="closeCustomTextModal()">Cancelar</button>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
+<script>const dayTeamSequence = ['B', 'A', 'B', 'A', 'E'];
+const nightTeamSequence = ['D', 'E', 'C', 'D', 'C'];
+const baseDate = new Date(2024, 0, 1);
+const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 const motivationalQuotes = [
-  "A persistência é o caminho do êxito.",
+ "A persistência é o caminho do êxito.",
     "O sucesso nasce do querer, da determinação e persistência em se chegar a um objetivo.",
     "Nada é impossível para aquele que persiste.",
     "O único lugar onde o sucesso vem antes do trabalho é no dicionário.",
@@ -540,357 +486,265 @@ const motivationalQuotes = [
     "A persistência é o caminho do êxito.",
     "A verdadeira motivação vem de realização, desenvolvimento pessoal, satisfação no trabalho e reconhecimento."
 ];
-
-
-
+const holidays = {
+  "01/01": "Ano Novo",
+  "21/04": "Tiradentes",
+  "01/05": "Dia do Trabalho",
+  "07/09": "Independência",
+  "12/10": "Nossa Senhora",
+  "02/11": "Finados",
+  "15/11": "República",
+  "25/12": "Natal"
+};
+let currentDate = new Date();
+let currentMonth = currentDate.getMonth();
+let currentYear = currentDate.getFullYear();
 let selectedCell = null;
-
-function highlightTeam(team) {
-  const cells = document.querySelectorAll('td');
-  cells.forEach(cell => {
-    if (!cell.classList.contains('option-selected')) {
-      cell.classList.remove('team-highlight');
-    }
-  });
-
-  if (!team) return;
-
-  const dayTeamCells = document.querySelectorAll('td:nth-child(3)'); // Day team column
-  const nightTeamCells = document.querySelectorAll('td:nth-child(4)'); // Night team column
-
-  dayTeamCells.forEach(cell => {
-    if (cell.textContent.trim() === team && !cell.classList.contains('option-selected')) {
-      cell.classList.add('team-highlight');
-    }
-  });
-
-  nightTeamCells.forEach(cell => {
-    if (cell.textContent.trim() === team && !cell.classList.contains('option-selected')) {
-      cell.classList.add('team-highlight');
-    }
-  });
-  
-  saveState(); // Save state after highlighting
+let loadedFromStorage = false;
+function getDaysSinceBase(date) {
+  return Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
 }
-
-function calculateStartingCounters(year) {
-  const baseYear = 2024;
-  const yearDiff = year - baseYear;
-  
-  // Calculate total days from base year to start of target year
-  let totalDays = 0;
-  for (let y = baseYear; y < year; y++) {
-    totalDays += (new Date(y, 11, 31)).getDate(); // Get days in the year
-  }
-  
-  // The sequence repeats every 5 positions
-  const startPosition = totalDays % 5;
-  
+function getTeams(date) {
+  const daysSinceBase = getDaysSinceBase(date);
   return {
-    dayTeamStart: startPosition,
-    nightTeamStart: startPosition
+    day: dayTeamSequence[daysSinceBase % 5],
+    night: nightTeamSequence[daysSinceBase % 5]
   };
 }
-
-function showOptionsModal(event) {
-  const cell = event.target.closest('td'); // Get the clicked cell
-  window.currentSelectedCell = cell; // Store reference to clicked cell globally
-  const optionsList = document.getElementById('optionsList');
-  
-  // Simply show the options list - it will be centered due to CSS
-  optionsList.style.display = 'block';
-}
-
-function updateMotivationalQuote() {
-  const quoteElement = document.getElementById('motivationalQuote');
-  const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
-  quoteElement.innerHTML = `<span>${randomQuote}</span>`;
-}
-
-function saveState() {
-  const year = document.getElementById('yearInput').value;
-  const state = {
-    year: year,
-    team: document.getElementById('teamSelect').value,
-    darkMode: document.body.classList.contains('dark-mode'),
-    cellOptions: []
-  };
-
-  // Save cells with options for this specific year
-  document.querySelectorAll('table').forEach((table, monthIndex) => {
-    table.querySelectorAll('tr').forEach((row, rowIndex) => {
-      if (rowIndex > 1) {
-        const cells = row.querySelectorAll('td');
-        const day = cells[0].textContent;
-        cells.forEach((cell, cellIndex) => {
-          const watermark = cell.querySelector('.option-watermark');
-          if (watermark) {
-            state.cellOptions.push({
-              year: parseInt(year),  // Add year to identify unique cells
-              month: monthIndex,
-              day: parseInt(day),
-              cellIndex: cellIndex,
-              option: watermark.textContent,
-              isHighlighted: cell.classList.contains('option-selected')
-            });
-          }
-        });
-      }
-    });
-  });
-
-  localStorage.setItem(`scheduleState_${year}`, JSON.stringify(state));
-  
-  // Store current year and dark mode separately
-  localStorage.setItem('scheduleGlobalSettings', JSON.stringify({
-    darkMode: state.darkMode,
-    lastYear: year
-  }));
-}
-
-function loadSavedState() {
-  const year = parseInt(document.getElementById('yearInput').value);
-  const savedState = localStorage.getItem(`scheduleState_${year}`);
-  const globalSettings = JSON.parse(localStorage.getItem('scheduleGlobalSettings') || '{}');
-  
-  if (globalSettings.darkMode) {
-    document.body.classList.add('dark-mode');
-  }
-
-  if (savedState) {
-    const state = JSON.parse(savedState);
-
-    // Only restore options that match the current year exactly
-    if (state.cellOptions) {
-      setTimeout(() => {
-        state.cellOptions.forEach(option => {
-          if (option.year === year) { // Strict year comparison
-            const tables = document.querySelectorAll('table');
-            if (tables[option.month]) {
-              const rows = tables[option.month].querySelectorAll('tr');
-              rows.forEach(row => {
-                const firstCell = row.querySelector('td');
-                if (firstCell && parseInt(firstCell.textContent) === option.day) {
-                  const targetCell = row.querySelectorAll('td')[option.cellIndex];
-                  if (targetCell) {
-                    selectOption(option.option, targetCell);
-                    if (option.isHighlighted) {
-                      targetCell.classList.add('option-selected');
-                    }
-                  }
-                }
-              });
-            }
-          }
-        });
-        // Apply team highlighting after options are restored
-        const selectedTeam = document.getElementById('teamSelect').value;
-        if (selectedTeam) {
-          highlightTeam(selectedTeam);
-        }
-      }, 100);
+function generateCalendar() {
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const lastDay = new Date(currentYear, currentMonth + 1, 0);
+  const today = new Date();
+  document.getElementById('monthDisplay').textContent = `${months[currentMonth]} ${currentYear}`;
+  const tbody = document.getElementById('calendarBody');
+  tbody.innerHTML = '';
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const date = new Date(currentYear, currentMonth, day);
+    const teams = getTeams(date);
+    const row = document.createElement('tr');
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    const isToday = date.toDateString() === today.toDateString();
+    const cells = [`<td ${isToday ? 'class="today"' : ''}>${day}</td>`, `<td ${isWeekend ? 'class="weekend"' : ''}>${weekDays[date.getDay()]}</td>`, `<td onclick="showTaskOptions(event)">${teams.day}</td>`, `<td onclick="showTaskOptions(event)">${teams.night}</td>`];
+    row.innerHTML = cells.join('');
+    tbody.appendChild(row);
+    const dateStr = `${String(day).padStart(2, '0')}/${String(currentMonth + 1).padStart(2, '0')}`;
+    if (holidays[dateStr]) {
+      const watermark = document.createElement('div');
+      watermark.className = 'holiday-watermark';
+      watermark.textContent = holidays[dateStr];
+      row.cells[0].appendChild(watermark);
     }
   }
+  loadState();
 }
-
-function updateSchedule() {
-  const yearInput = document.getElementById('yearInput');
-  const year = parseInt(yearInput.value);
-  
-  if (year < 2024) {
-    alert('Por favor, insira um ano igual ou posterior a 2024');
-    yearInput.value = 2024;
-    return;
+function showTaskOptions(event) {
+  const cell = event.target;
+  selectedCell = cell;
+  const taskOptions = document.getElementById('taskOptions');
+  const rect = cell.getBoundingClientRect();
+  taskOptions.style.display = 'block';
+  taskOptions.style.top = `${rect.bottom + window.scrollY}px`;
+  taskOptions.style.left = `${rect.left}px`;
+}
+function addTask(taskType) {
+  if (!selectedCell) return;
+  const cellIndex = Array.from(selectedCell.parentElement.children).indexOf(selectedCell);
+  if (cellIndex !== 2 && cellIndex !== 3) return;
+  removeTask();
+  const marker = document.createElement('span');
+  marker.className = `task-marker task-${taskType.toLowerCase()}`;
+  if (taskType === 'OUTROS') {
+    const customText = selectedCell.getAttribute('data-custom-text') || '';
+    marker.textContent = customText.substring(0, 10).toUpperCase();
+  } else {
+    marker.textContent = taskType;
   }
-
-  // Store current selected team
-  const selectedTeam = document.getElementById('teamSelect').value;
-
-  // Generate new schedule
-  generateSchedule(year);
-
-  // Load saved options for this specific year
-  loadSavedState();
-
-  // Apply team highlighting after schedule is regenerated
-  highlightTeam(selectedTeam);
+  marker.addEventListener('dblclick', function () {
+    this.classList.toggle('expanded');
+  });
+  selectedCell.appendChild(marker);
+  selectedCell.classList.add('has-task');
+  document.getElementById('taskOptions').style.display = 'none';
+  saveState();
 }
-
+function showCustomTextInput() {
+  document.getElementById('taskOptions').style.display = 'none';
+  document.getElementById('customTextModal').style.display = 'block';
+}
+function addCustomTask() {
+  const customText = document.getElementById('customTextInput').value.trim().toUpperCase();
+  if (customText && customText.length >= 5 && customText.length <= 20) {
+    selectedCell.setAttribute('data-custom-text', customText);
+    addTask('OUTROS');
+  }
+  closeCustomTextModal();
+}
+function closeCustomTextModal() {
+  document.getElementById('customTextModal').style.display = 'none';
+  document.getElementById('customTextInput').value = '';
+}
+function removeTask() {
+  if (!selectedCell) return;
+  const marker = selectedCell.querySelector('.task-marker');
+  if (marker) {
+    marker.remove();
+    selectedCell.classList.remove('has-task');
+  }
+  document.getElementById('taskOptions').style.display = 'none';
+  saveState();
+}
 function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   saveState();
-  generateSchedule(document.getElementById('yearInput').value || new Date().getFullYear());
-  // Restore state after regenerating schedule
-  loadSavedState();
+  generateCalendar();
+  loadState();
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000);
 }
-
-function generateSchedule(year) {
-  const scheduleContainer = document.getElementById('scheduleContainer');
-  scheduleContainer.innerHTML = '';
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
-  const currentDay = currentDate.getDate();
-  
-  const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
-                  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-  const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
-  // Get starting positions based on year difference from 2024
-  const { dayTeamStart, nightTeamStart } = calculateStartingCounters(parseInt(year));
-  
-  let dayTeamCounter = dayTeamStart;
-  let nightTeamCounter = nightTeamStart;
-  const dayTeamSequence = ['B', 'A', 'B', 'A', 'E'];  // BABAE sequence
-  const nightTeamSequence = ['D', 'E', 'C', 'D', 'C']; // DECDC sequence
-  
-  for (let month = 0; month < 12; month++) {
-    const table = document.createElement('table');
-    const monthHeader = document.createElement('tr');
-    const monthCell = document.createElement('th');
-    monthCell.colSpan = 4;
-    monthCell.textContent = `${months[month]} ${year}`;
-    monthCell.className = 'month-header';
-    monthHeader.appendChild(monthCell);
-    table.appendChild(monthHeader);
-
-    const headerRow = document.createElement('tr');
-    ['Dia', 'Dia Semana', 'Equipe Dia', 'Equipe Noite'].forEach(header => {
-      const th = document.createElement('th');
-      th.textContent = header;
-      headerRow.appendChild(th);
-    });
-    table.appendChild(headerRow);
-
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      const row = document.createElement('tr');
-      
-      // Day number cell
-      const dayCell = document.createElement('td');
-      dayCell.textContent = day;
-      
-      // Day of week cell
-      const dayOfWeekCell = document.createElement('td');
-      dayOfWeekCell.textContent = daysOfWeek[date.getDay()];
-      
-      // Day team cell
-      const dayTeamCell = document.createElement('td');
-      dayTeamCell.textContent = dayTeamSequence[dayTeamCounter % 5];
-      dayTeamCell.onclick = showOptionsModal;
-      
-      // Night team cell
-      const nightTeamCell = document.createElement('td');
-      nightTeamCell.textContent = nightTeamSequence[nightTeamCounter % 5];
-      nightTeamCell.onclick = showOptionsModal;
-
-      // Add weekend class if needed
-      if (date.getDay() === 0 || date.getDay() === 6) {
-        dayCell.classList.add('weekend');
-        dayOfWeekCell.classList.add('weekend');
-        dayTeamCell.classList.add('weekend');
-        nightTeamCell.classList.add('weekend');
-      }
-
-      // Highlight current day
-      if (year == currentYear && month == currentMonth && day == currentDay) {
-        dayCell.classList.add('current-day');
-        dayOfWeekCell.classList.add('current-day');
-        dayTeamCell.classList.add('current-day');
-        nightTeamCell.classList.add('current-day');
-      }
-
-      row.appendChild(dayCell);
-      row.appendChild(dayOfWeekCell);
-      row.appendChild(dayTeamCell);
-      row.appendChild(nightTeamCell);
-      table.appendChild(row);
-
-      dayTeamCounter++;
-      nightTeamCounter++;
-    }
-    
-    scheduleContainer.appendChild(table);
+function updateYear() {
+  const yearInput = document.getElementById('yearInput');
+  const newYear = parseInt(yearInput.value);
+  if (newYear >= 2024) {
+    currentYear = newYear;
+    loadedFromStorage = true;
+    generateCalendar();
+    saveState();
+    loadState();
+  } else {
+    alert('Por favor, insira um ano igual ou posterior a 2024');
+    yearInput.value = currentYear;
   }
 }
-
-function selectOption(option, targetCell = null) {
-  const cell = targetCell || window.currentSelectedCell;
-  if (!cell) return;
-  
-  if (option === 'OUTROS') {
-    // Store reference to current cell and show dialog
-    window.currentCustomCell = cell;
-    document.getElementById('customTextDialog').style.display = 'block';
-    document.getElementById('customTextInput').value = '';
-    return;
+function updateMotivationalQuote() {
+  const quoteEl = document.getElementById('motivationalQuote');
+  const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+  quoteEl.innerHTML = `<span>${randomQuote}</span>`;
+}
+document.addEventListener('click', event => {
+  const taskOptions = document.getElementById('taskOptions');
+  if (!event.target.closest('td') && !event.target.closest('.task-options')) {
+    taskOptions.style.display = 'none';
   }
-  
-  if (option === 'CANCELAR') {
-    const watermark = cell.querySelector('.option-watermark');
-    if (watermark) {
-      watermark.remove();
-    }
-    cell.classList.remove('option-selected');
-    
-    const team = document.getElementById('teamSelect').value;
-    if (team && (cell.textContent.trim() === team)) {
-      cell.classList.add('team-highlight');
+});
+document.getElementById('prevMonth').addEventListener('click', () => {
+  if (currentMonth === 0) {
+    if (currentYear > 2024) {
+      currentYear--;
+      currentMonth = 11;
     }
   } else {
-    const existingWatermark = cell.querySelector('.option-watermark');
-    if (existingWatermark) {
-      existingWatermark.remove();
-    }
-    
-    const watermark = document.createElement('div');
-    watermark.className = 'option-watermark';
-    watermark.textContent = option;
-    cell.appendChild(watermark);
-    cell.classList.add('option-selected');
+    currentMonth--;
   }
-  
-  document.getElementById('optionsList').style.display = 'none';
-  saveState(); // Save state after every option change
-}
-
-function saveCustomText() {
-  const input = document.getElementById('customTextInput');
-  const text = input.value.trim();
-  
-  if (text.length < 5 || text.length > 20) {
-    alert('O texto deve ter entre 5 e 20 caracteres');
-    return;
+  generateCalendar();
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+  if (currentMonth === 11) {
+    currentYear++;
+    currentMonth = 0;
+  } else {
+    currentMonth++;
   }
-  
-  if (window.currentCustomCell) {
-    selectOption(text, window.currentCustomCell);
-    closeCustomTextDialog();
-  }
-}
-
-function closeCustomTextDialog() {
-  document.getElementById('customTextDialog').style.display = 'none';
-  window.currentCustomCell = null;
-}
-
-// Load saved state when page loads
-document.addEventListener('DOMContentLoaded', () => {
-  loadSavedState();
-  updateSchedule();
-  updateMotivationalQuote();
-  setInterval(updateMotivationalQuote, 10000);
-
-  // Close options list when clicking outside
-  document.addEventListener('click', (e) => {
-    const optionsList = document.getElementById('optionsList');
-    if (!e.target.closest('td') && !e.target.closest('.options-list')) {
-      optionsList.style.display = 'none';
+  generateCalendar();
+});
+document.getElementById('teamSelect').addEventListener('change', function () {
+  const team = this.value;
+  highlightTeam(team);
+  saveState();
+});
+function saveState() {
+  const state = {
+    year: currentYear,
+    team: document.getElementById('teamSelect').value,
+    darkMode: document.body.classList.contains('dark-mode'),
+    tasks: []
+  };
+  document.querySelectorAll('td').forEach(cell => {
+    const marker = cell.querySelector('.task-marker');
+    if (marker) {
+      const task = {
+        date: cell.parentElement.firstElementChild.textContent,
+        month: currentMonth,
+        year: currentYear,
+        taskType: marker.textContent,
+        team: cell.textContent.replace(marker.textContent, '').trim()
+      };
+      state.tasks.push(task);
     }
   });
-});
-</script>
+  localStorage.setItem('calendarState', JSON.stringify(state));
+}
+function loadState() {
+  const savedState = localStorage.getItem('calendarState');
+  if (savedState && !loadedFromStorage) {
+    const state = JSON.parse(savedState);
+    if (state.darkMode) {
+      document.body.classList.add('dark-mode');
+      const button = document.querySelector('.dark-mode-toggle');
+      button.textContent = '☀️';
+    }
+    if (!loadedFromStorage) {
+      currentYear = new Date().getFullYear();
+      currentMonth = new Date().getMonth();
+      document.getElementById('yearInput').value = currentYear;
+    }
+    loadedFromStorage = true;
+    if (state.team) {
+      document.getElementById('teamSelect').value = state.team;
+      highlightTeam(state.team);
+    }
+    if (state.tasks) {
+      state.tasks.forEach(task => {
+        if (task.year === currentYear && task.month === currentMonth) {
+          document.querySelectorAll('td').forEach(cell => {
+            const cellText = cell.textContent.replace(/[^A-E]/g, '').trim();
+            if (cellText === task.team && cell.parentElement.firstElementChild.textContent === task.date) {
+              selectedCell = cell;
+              if (task.taskType.startsWith('OUTROS:')) {
+                cell.setAttribute('data-custom-text', task.taskType.replace('OUTROS:', ''));
+                addTask('OUTROS');
+              } else {
+                addTask(task.taskType);
+              }
+            }
+            if (state.team && cellText === state.team) {
+              cell.classList.add('team-highlight');
+            }
+          });
+        }
+      });
+    }
+  }
+}
+function highlightTeam(team) {
+  document.querySelectorAll('.team-highlight').forEach(cell => {
+    cell.classList.remove('team-highlight');
+  });
+  if (!team) return;
+  document.querySelectorAll('td:nth-child(3), td:nth-child(4)').forEach(cell => {
+    const cellText = cell.textContent.replace(/[^A-E]/g, '').trim();
+    if (cellText === team) {
+      cell.classList.add('team-highlight');
+    }
+  });
+  saveState();
+}
+document.addEventListener('DOMContentLoaded', () => {
+  loadedFromStorage = false;
+  generateCalendar();
+  loadState();
+  updateMotivationalQuote();
+  setInterval(updateMotivationalQuote, 15000);
+  const savedState = localStorage.getItem('calendarState');
+  if (savedState) {
+    const state = JSON.parse(savedState);
+    if (state.darkMode) {
+      document.body.classList.add('dark-mode');
+      const button = document.querySelector('.dark-mode-toggle');
+      button.textContent = '☀️';
+    }
+  }
+});</script>
+
 </body>
 </html>

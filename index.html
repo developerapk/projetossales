@@ -1,8 +1,8 @@
 
 <html><head><base href="https://example.com/">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Escala de Equipes</title>
-
 
 <style>
 body {
@@ -165,9 +165,9 @@ body.dark-mode .dark-mode-toggle {
 }
 
 .task-marker {
-  position: absolute;
-  top: 2px;
-  right: 2px;
+  position: ABSOLUTE;
+  top: 5px;
+  right: 5px;
   font-size: 0.8em;
   padding: 2px 4px;
   border-radius: 2px;
@@ -350,6 +350,7 @@ body.dark-mode .team-highlight {
       <option value="D">Equipe D</option>
       <option value="E">Equipe E</option>
     </select>
+    <button class="nav-button" onclick="location.reload()">&#x21bb; Recarregar</button>
   </div>
   
   <div class="motivational-quote" id="motivationalQuote"></div>
@@ -401,6 +402,9 @@ const nightTeamSequence = ['D', 'E', 'C', 'D', 'C'];
 const baseDate = new Date(2024, 0, 1);
 const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+
+
 const motivationalQuotes = [
  "A persistência é o caminho do êxito.",
     "O sucesso nasce do querer, da determinação e persistência em se chegar a um objetivo.",
@@ -486,6 +490,8 @@ const motivationalQuotes = [
     "A persistência é o caminho do êxito.",
     "A verdadeira motivação vem de realização, desenvolvimento pessoal, satisfação no trabalho e reconhecimento."
 ];
+
+
 const holidays = {
   "01/01": "Ano Novo",
   "21/04": "Tiradentes",
@@ -500,9 +506,12 @@ let currentDate = new Date();
 let currentMonth = currentDate.getMonth();
 let currentYear = currentDate.getFullYear();
 let selectedCell = null;
-let loadedFromStorage = false;
+const getStorageKey = (year, month) => `calendarState_${year}_${month}`;
 function getDaysSinceBase(date) {
-  return Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
+  const targetDate = new Date(date);
+  const baseDate = new Date(2024, 0, 1);
+  const diffTime = targetDate - baseDate;
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
 }
 function getTeams(date) {
   const daysSinceBase = getDaysSinceBase(date);
@@ -548,34 +557,35 @@ function showTaskOptions(event) {
 }
 function addTask(taskType) {
   if (!selectedCell) return;
-  const cellIndex = Array.from(selectedCell.parentElement.children).indexOf(selectedCell);
-  if (cellIndex !== 2 && cellIndex !== 3) return;
   removeTask();
   const marker = document.createElement('span');
   marker.className = `task-marker task-${taskType.toLowerCase()}`;
+  marker.textContent = taskType;
   if (taskType === 'OUTROS') {
-    const customText = selectedCell.getAttribute('data-custom-text') || '';
-    marker.textContent = customText.substring(0, 10).toUpperCase();
-  } else {
-    marker.textContent = taskType;
+    marker.textContent = marker.textContent.substring(0, 10);
   }
   marker.addEventListener('dblclick', function () {
     this.classList.toggle('expanded');
   });
   selectedCell.appendChild(marker);
-  selectedCell.classList.add('has-task');
   document.getElementById('taskOptions').style.display = 'none';
   saveState();
 }
 function showCustomTextInput() {
   document.getElementById('taskOptions').style.display = 'none';
+  document.getElementById('customTextInput').value = '';
   document.getElementById('customTextModal').style.display = 'block';
+  document.getElementById('customTextInput').focus();
 }
 function addCustomTask() {
   const customText = document.getElementById('customTextInput').value.trim().toUpperCase();
   if (customText && customText.length >= 5 && customText.length <= 20) {
-    selectedCell.setAttribute('data-custom-text', customText);
     addTask('OUTROS');
+    const marker = selectedCell.querySelector('.task-marker');
+    if (marker) {
+      marker.textContent = customText.substring(0, 10);
+      marker.setAttribute('data-full-text', customText);
+    }
   }
   closeCustomTextModal();
 }
@@ -588,7 +598,6 @@ function removeTask() {
   const marker = selectedCell.querySelector('.task-marker');
   if (marker) {
     marker.remove();
-    selectedCell.classList.remove('has-task');
   }
   document.getElementById('taskOptions').style.display = 'none';
   saveState();
@@ -596,18 +605,13 @@ function removeTask() {
 function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   saveState();
-  generateCalendar();
-  loadState();
-  setTimeout(() => {
-    window.location.reload();
-  }, 1000);
+  location.reload();
 }
 function updateYear() {
   const yearInput = document.getElementById('yearInput');
   const newYear = parseInt(yearInput.value);
   if (newYear >= 2024) {
     currentYear = newYear;
-    loadedFromStorage = true;
     generateCalendar();
     saveState();
     loadState();
@@ -629,10 +633,8 @@ document.addEventListener('click', event => {
 });
 document.getElementById('prevMonth').addEventListener('click', () => {
   if (currentMonth === 0) {
-    if (currentYear > 2024) {
-      currentYear--;
-      currentMonth = 11;
-    }
+    currentYear--;
+    currentMonth = 11;
   } else {
     currentMonth--;
   }
@@ -662,53 +664,61 @@ function saveState() {
   document.querySelectorAll('td').forEach(cell => {
     const marker = cell.querySelector('.task-marker');
     if (marker) {
+      const row = cell.parentElement;
       const task = {
-        date: cell.parentElement.firstElementChild.textContent,
+        date: row.cells[0].textContent,
         month: currentMonth,
         year: currentYear,
         taskType: marker.textContent,
+        expanded: marker.classList.contains('expanded'),
+        cellIndex: Array.from(row.cells).indexOf(cell),
         team: cell.textContent.replace(marker.textContent, '').trim()
       };
       state.tasks.push(task);
     }
   });
-  localStorage.setItem('calendarState', JSON.stringify(state));
+  const storageKey = getStorageKey(currentYear, currentMonth);
+  localStorage.setItem(storageKey, JSON.stringify(state));
 }
 function loadState() {
-  const savedState = localStorage.getItem('calendarState');
-  if (savedState && !loadedFromStorage) {
+  const storageKey = getStorageKey(currentYear, currentMonth);
+  const savedState = localStorage.getItem(storageKey);
+  if (savedState) {
     const state = JSON.parse(savedState);
-    if (state.darkMode) {
-      document.body.classList.add('dark-mode');
-      const button = document.querySelector('.dark-mode-toggle');
-      button.textContent = '☀️';
-    }
-    if (!loadedFromStorage) {
-      currentYear = new Date().getFullYear();
-      currentMonth = new Date().getMonth();
-      document.getElementById('yearInput').value = currentYear;
-    }
-    loadedFromStorage = true;
+    currentYear = state.year || new Date().getFullYear();
+    document.getElementById('yearInput').value = currentYear;
     if (state.team) {
       document.getElementById('teamSelect').value = state.team;
       highlightTeam(state.team);
     }
+    if (state.darkMode) {
+      document.body.classList.add('dark-mode');
+      document.querySelector('.dark-mode-toggle').textContent = '☀️';
+    }
     if (state.tasks) {
       state.tasks.forEach(task => {
         if (task.year === currentYear && task.month === currentMonth) {
-          document.querySelectorAll('td').forEach(cell => {
-            const cellText = cell.textContent.replace(/[^A-E]/g, '').trim();
-            if (cellText === task.team && cell.parentElement.firstElementChild.textContent === task.date) {
+          const rows = document.querySelectorAll('#calendarBody tr');
+          rows.forEach(row => {
+            if (row.cells[0].textContent === task.date) {
+              const cell = row.cells[task.cellIndex];
               selectedCell = cell;
-              if (task.taskType.startsWith('OUTROS:')) {
-                cell.setAttribute('data-custom-text', task.taskType.replace('OUTROS:', ''));
+              if (task.taskType.includes('OUTROS')) {
                 addTask('OUTROS');
+                const marker = cell.querySelector('.task-marker');
+                if (marker) {
+                  marker.textContent = task.taskType.replace('OUTROS:', '').toUpperCase();
+                  if (task.expanded) {
+                    marker.classList.add('expanded');
+                  }
+                }
               } else {
                 addTask(task.taskType);
+                const marker = cell.querySelector('.task-marker');
+                if (marker && task.expanded) {
+                  marker.classList.add('expanded');
+                }
               }
-            }
-            if (state.team && cellText === state.team) {
-              cell.classList.add('team-highlight');
             }
           });
         }
@@ -720,29 +730,29 @@ function highlightTeam(team) {
   document.querySelectorAll('.team-highlight').forEach(cell => {
     cell.classList.remove('team-highlight');
   });
-  if (!team) return;
-  document.querySelectorAll('td:nth-child(3), td:nth-child(4)').forEach(cell => {
-    const cellText = cell.textContent.replace(/[^A-E]/g, '').trim();
-    if (cellText === team) {
-      cell.classList.add('team-highlight');
-    }
-  });
-  saveState();
+  if (team) {
+    document.querySelectorAll('td').forEach(cell => {
+      if (cell.textContent.trim() === team && !cell.querySelector('.task-marker')) {
+        cell.classList.add('team-highlight');
+      }
+    });
+  }
 }
 document.addEventListener('DOMContentLoaded', () => {
-  loadedFromStorage = false;
+  document.getElementById('yearInput').value = currentYear;
   generateCalendar();
-  loadState();
   updateMotivationalQuote();
   setInterval(updateMotivationalQuote, 15000);
-  const savedState = localStorage.getItem('calendarState');
-  if (savedState) {
-    const state = JSON.parse(savedState);
-    if (state.darkMode) {
-      document.body.classList.add('dark-mode');
-      const button = document.querySelector('.dark-mode-toggle');
-      button.textContent = '☀️';
-    }
+  loadState();
+});
+document.getElementById('customTextInput').addEventListener('input', function () {
+  const value = this.value.trim();
+  if (value.length < 5) {
+    this.setCustomValidity('Mínimo de 5 caracteres necessários');
+  } else if (value.length > 20) {
+    this.setCustomValidity('Máximo de 20 caracteres permitidos');
+  } else {
+    this.setCustomValidity('');
   }
 });</script>
 

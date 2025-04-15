@@ -1,9 +1,8 @@
-
-<html><head><base href="https://example.com/">
+<html>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Escala de Equipes</title>
-
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -77,8 +76,20 @@ td {
 }
 
 .today {
-  background: #e6f7ff;
+  position: relative;
   font-weight: bold;
+}
+
+.today:before {
+  content: "⚡";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  font-size: 1.5em;
+  color: #bf00ff;
+  animation: lightningFlash 1s infinite;
+  z-index: 0;
 }
 
 td.has-task {
@@ -110,7 +121,11 @@ body.dark-mode .weekend {
 }
 
 body.dark-mode .today {
-  background: #1a3f55;
+  color: #cc00ff;
+}
+
+body.dark-mode .today:before {
+  color: #cc00ff;
 }
 
 /* Task options styling */
@@ -165,7 +180,7 @@ body.dark-mode .dark-mode-toggle {
 }
 
 .task-marker {
-  position: ABSOLUTE;
+  position: absolute;
   top: 5px;
   right: 5px;
   font-size: 0.8em;
@@ -190,7 +205,7 @@ body.dark-mode .dark-mode-toggle {
 .task-delegada { background: #ffa500; }
 .task-folga { background: #ffa500; }
 .task-troca { background: #ffa500; }
-.task-outros { background: #ffa500; }
+.task-outros { background: #ffff00; }
 
 /* Year selection */
 .year-selection {
@@ -232,11 +247,6 @@ body.dark-mode .credits {
 .motivational-quote span {
   display: inline-block;
   animation: scrollQuote 20s linear infinite;
-}
-
-@keyframes scrollQuote {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
 }
 
 body.dark-mode .motivational-quote {
@@ -311,10 +321,32 @@ body.dark-mode .team-highlight {
   100% { transform: translateY(-50%) translateX(-100%); }
 }
 
+@keyframes todayPulse {
+  0% { background: #bf00ff; }
+  50% { background: #dd66ff; }
+  100% { background: #bf00ff; }
+}
+
+body.dark-mode @keyframes todayPulse {
+  0% { background: #cc00ff; }
+  50% { background: #dd66ff; }
+  100% { background: #cc00ff; }
+}
+
 @keyframes neonPulse {
   0% { box-shadow: 0 0 5px #ff00ff, inset 0 0 5px #ff00ff; }
   50% { box-shadow: 0 0 20px #ff00ff, inset 0 0 10px #ff00ff; }
   100% { box-shadow: 0 0 5px #ff00ff, inset 0 0 5px #ff00ff; }
+}
+
+@keyframes scrollQuote {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes lightningFlash {
+  0%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(0.8); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
 }
 
 @media (max-width: 768px) {
@@ -380,10 +412,10 @@ body.dark-mode .team-highlight {
 </div>
 
 <div id="taskOptions" class="task-options">
-  <div class="task-option" onclick="addTask(&apos;DEJEM&apos;)">DEJEM</div>
-  <div class="task-option" onclick="addTask(&apos;DELEGADA&apos;)">DELEGADA</div>
-  <div class="task-option" onclick="addTask(&apos;FOLGA&apos;)">FOLGA</div>
-  <div class="task-option" onclick="addTask(&apos;TROCA&apos;)">TROCA DE SERVI&#xc7;O</div>
+  <div class="task-option" onclick="addTask('DEJEM')">DEJEM</div>
+  <div class="task-option" onclick="addTask('DELEGADA')">DELEGADA</div>
+  <div class="task-option" onclick="addTask('FOLGA')">FOLGA</div>
+  <div class="task-option" onclick="addTask('TROCA')">TROCA DE SERVI&#xc7;O</div>
   <div class="task-option" onclick="showCustomTextInput()">OUTROS</div>
   <div class="task-option" onclick="removeTask()">REMOVER</div>
 </div>
@@ -397,100 +429,19 @@ body.dark-mode .team-highlight {
   </div>
 </div>
 
-<script>const dayTeamSequence = ['B', 'A', 'B', 'A', 'E'];
+<script>
+// Constants used throughout the application
+const dayTeamSequence = ['B', 'A', 'B', 'A', 'E'];
 const nightTeamSequence = ['D', 'E', 'C', 'D', 'C'];
 const baseDate = new Date(2024, 0, 1);
 const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
-
-
 const motivationalQuotes = [
  "A persistência é o caminho do êxito.",
-    "O sucesso nasce do querer, da determinação e persistência em se chegar a um objetivo.",
-    "Nada é impossível para aquele que persiste.",
-    "O único lugar onde o sucesso vem antes do trabalho é no dicionário.",
-    "Acredite em si próprio e chegará um dia em que os outros não terão outra escolha senão acreditar com você.",
-    "O sucesso é a soma de pequenos esforços repetidos dia após dia.",
-    "Toda ação humana, quer se torne positiva ou negativa, precisa depender de motivação.",
-    "A verdadeira motivação vem de realização, desenvolvimento pessoal, satisfação no trabalho e reconhecimento.",
-    "O insucesso é apenas uma oportunidade para recomeçar com mais inteligência.",
-    "Você nunca sabe que resultados virão da sua ação. Mas se você não fizer nada, não existirão resultados.",
-    "Não espere por uma crise para descobrir o que é importante em sua vida.",
-    "A melhor maneira de prever o futuro é criá-lo.",
-    "O pessimista vê dificuldade em cada oportunidade. O otimista vê oportunidade em cada dificuldade.",
-    "Nós somos o que fazemos repetidamente. Excelência, então, não é um ato, mas um hábito.",
-    "Se você não pode fazer grandes coisas, faça pequenas coisas de uma maneira grandiosa.",
-    "O sucesso é a soma de pequenos esforços repetidos dia após dia.",
-    "Acredite em si mesmo e todo o resto se encaixará.",
-    "A jornada de mil milhas começa com um único passo.",
-    "A única maneira de fazer um excelente trabalho é amar o que você faz.",
-    "O fracasso é o condimento que dá sabor ao sucesso.",
-    "A motivação é o que faz você começar. O hábito é o que faz você continuar.",
-    "A única maneira de alcançar o impossível é acreditar que é possível.",
-    "O que você consegue alcançar é limitado apenas pelo que você acredita ser possível.",
-    "O sucesso é a melhor vingança para aqueles que duvidaram de você.",
-    "A jornada de um milhão de milhas começa com um único passo.",
-    "A persistência realiza o impossível.",
-    "O sucesso não é final, o fracasso não é fatal: o que conta é a coragem de continuar.",
-    "O maior perigo para a maioria de nós não está em definir metas altas e não atingi-las, mas em definir metas pequenas e atingi-las.",
-    "A vida é 10% do que acontece conosco e 90% de como reagimos a isso.",
-    "Acredite que você pode e você já está no meio do caminho.",
-    "O sucesso não é para os preguiçosos.",
-    "O otimismo é a fé em ação. Nada se pode realizar sem esperança e confiança.",
-    "O verdadeiro segredo do sucesso é o entusiasmo.",
-    "O sucesso não é sorte, é trabalho duro, perseverança, aprendizado, sacrifício e acima de tudo, amor pelo que você está fazendo ou aprendendo a fazer.",
-    "Se você quer alcançar a excelência, pode chegar lá hoje. Conforme o grande impulsionador, o tempo é agora.",
-    "A vida é curta, aproveite cada momento.",
-    "Não importa o quão devagar você vá, desde que você não pare.",
-    "Você é mais corajoso do que acredita, mais forte do que parece e mais inteligente do que pensa.",
-    "A disciplina é a ponte entre metas e realizações.",
-    "O futuro pertence àqueles que acreditam na beleza de seus sonhos.",
-    "O momento em que você desiste é geralmente o momento em que o milagre está prestes a acontecer.",
-    "Você é capaz de mais do que imagina.",
-    "A mente é como um paraquedas, só funciona se estiver aberta.",
-    "O sucesso não é o final, o fracasso não é fatal: é a coragem de continuar que conta.",
-    "O que você faz hoje pode melhorar todos os amanhãs.",
-    "A verdadeira motivação vem de realização, desenvolvimento pessoal, satisfação no trabalho e reconhecimento.",
-    "A mente é tudo. Você se torna aquilo que você pensa.",
-    "O trabalho árduo vence o talento quando o talento não trabalha duro.",
-    "A melhor forma de prever o futuro é criá-lo.",
-    "A excelência não é uma habilidade, é uma atitude.",
-    "O sucesso é construído sobre falhas, frustrações e coragem.",
-    "O entusiasmo move o mundo.",
-    "Não é o que temos, mas quem somos que faz a diferença.",
-    "Não espere por circunstâncias ideais, elas nunca chegarão. Comece agora.",
-    "Cada dia é uma nova oportunidade para mudar sua vida.",
-    "Acreditar é o primeiro passo para fazer acontecer.",
-    "O sucesso é construído em pequenos passos. Cada dia é uma nova oportunidade para progredir.",
-    "A melhor maneira de prever o futuro é criá-lo.",
-    "A persistência realiza o impossível.",
-    "A recompensa do trabalho bem-feito é a oportunidade de fazer mais.",
-    "O maior prazer na vida é fazer aquilo que as pessoas dizem que você não é capaz de fazer.",
-    "A chave para o sucesso é começar antes que você esteja pronto.",
-    "O sucesso é a soma de pequenos esforços repetidos dia após dia.",
-    "O sucesso não é garantido, mas o fracasso é certo se você não estiver tentando.",
-    "A chave do sucesso é começar antes que você esteja pronto.",
-    "O entusiasmo move o mundo.",
-    "O futuro pertence àqueles que acreditam na beleza de seus sonhos.",
-    "Não existe elevador para o sucesso, você deve subir a escada.",
-    "A vida é curta, aproveite cada momento.",
-    "A motivação é o que o coloca em movimento, o hábito é o que faz você continuar.",
-    "A criatividade é a inteligência se divertindo.",
-    "A jornada de um milhão de milhas começa com um único passo.",
-    "A única maneira de fazer um excelente trabalho é amar o que você faz.",
-    "A melhor maneira de prever o futuro é criá-lo.",
-    "Não tenha medo de desistir do bom para perseguir o ótimo.",
-    "O sucesso não é a chave para a felicidade. A felicidade é a chave para o sucesso. Se você ama o que faz, terá sucesso.",
-    "O entusiasmo move o mundo.",
-    "O sucesso é encontrar satisfação no próprio trabalho.",
-    "A força não vem da capacidade corporal, mas da vontade da mente.",
-    "O sucesso é construído sobre falhas, frustrações e coragem.",
-    "Não é o que você olha que importa, é o que você vê.",
-    "A persistência é o caminho do êxito.",
-    "A verdadeira motivação vem de realização, desenvolvimento pessoal, satisfação no trabalho e reconhecimento."
+ "O sucesso nasce do querer, da determinação e persistência em se chegar a um objetivo.",
+ "A verdadeira motivação vem de realização, desenvolvimento pessoal, satisfação no trabalho e reconhecimento."
 ];
-
 
 const holidays = {
   "01/01": "Ano Novo",
@@ -502,165 +453,55 @@ const holidays = {
   "15/11": "República",
   "25/12": "Natal"
 };
+
+// Global variables
+let selectedTeam = '';
 let currentDate = new Date();
 let currentMonth = currentDate.getMonth();
 let currentYear = currentDate.getFullYear();
 let selectedCell = null;
-const getStorageKey = (year, month) => `calendarState_${year}_${month}`;
-function getDaysSinceBase(date) {
-  const targetDate = new Date(date);
-  const baseDate = new Date(2024, 0, 1);
-  const diffTime = targetDate - baseDate;
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+// IndexedDB configuration
+const dbName = 'calendarTasksDB';
+const storeName = 'tasks';
+let db;
+
+function getStorageKey(year, month) {
+  return `calendarState_${year}_${month}`;
 }
-function getTeams(date) {
-  const daysSinceBase = getDaysSinceBase(date);
-  return {
-    day: dayTeamSequence[daysSinceBase % 5],
-    night: nightTeamSequence[daysSinceBase % 5]
-  };
-}
-function generateCalendar() {
-  const firstDay = new Date(currentYear, currentMonth, 1);
-  const lastDay = new Date(currentYear, currentMonth + 1, 0);
-  const today = new Date();
-  document.getElementById('monthDisplay').textContent = `${months[currentMonth]} ${currentYear}`;
-  const tbody = document.getElementById('calendarBody');
-  tbody.innerHTML = '';
-  for (let day = 1; day <= lastDay.getDate(); day++) {
-    const date = new Date(currentYear, currentMonth, day);
-    const teams = getTeams(date);
-    const row = document.createElement('tr');
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-    const isToday = date.toDateString() === today.toDateString();
-    const cells = [`<td ${isToday ? 'class="today"' : ''}>${day}</td>`, `<td ${isWeekend ? 'class="weekend"' : ''}>${weekDays[date.getDay()]}</td>`, `<td onclick="showTaskOptions(event)">${teams.day}</td>`, `<td onclick="showTaskOptions(event)">${teams.night}</td>`];
-    row.innerHTML = cells.join('');
-    tbody.appendChild(row);
-    const dateStr = `${String(day).padStart(2, '0')}/${String(currentMonth + 1).padStart(2, '0')}`;
-    if (holidays[dateStr]) {
-      const watermark = document.createElement('div');
-      watermark.className = 'holiday-watermark';
-      watermark.textContent = holidays[dateStr];
-      row.cells[0].appendChild(watermark);
-    }
-  }
-  loadState();
-}
-function showTaskOptions(event) {
-  const cell = event.target;
-  selectedCell = cell;
-  const taskOptions = document.getElementById('taskOptions');
-  const rect = cell.getBoundingClientRect();
-  taskOptions.style.display = 'block';
-  taskOptions.style.top = `${rect.bottom + window.scrollY}px`;
-  taskOptions.style.left = `${rect.left}px`;
-}
-function addTask(taskType) {
-  if (!selectedCell) return;
-  removeTask();
-  const marker = document.createElement('span');
-  marker.className = `task-marker task-${taskType.toLowerCase()}`;
-  marker.textContent = taskType;
-  if (taskType === 'OUTROS') {
-    marker.textContent = marker.textContent.substring(0, 10);
-  }
-  marker.addEventListener('dblclick', function () {
-    this.classList.toggle('expanded');
+
+function initDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(dbName, 1);
+    
+    request.onupgradeneeded = function(event) {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(storeName)) {
+        db.createObjectStore(storeName, { keyPath: 'id' });
+      }
+    };
+    
+    request.onsuccess = function(event) {
+      db = event.target.result;
+      resolve(db);
+    };
+    
+    request.onerror = function(event) {
+      console.error("IndexedDB error:", event.target.error);
+      reject(event.target.error);
+    };
   });
-  selectedCell.appendChild(marker);
-  document.getElementById('taskOptions').style.display = 'none';
-  saveState();
 }
-function showCustomTextInput() {
-  document.getElementById('taskOptions').style.display = 'none';
-  document.getElementById('customTextInput').value = '';
-  document.getElementById('customTextModal').style.display = 'block';
-  document.getElementById('customTextInput').focus();
-}
-function addCustomTask() {
-  const customText = document.getElementById('customTextInput').value.trim().toUpperCase();
-  if (customText && customText.length >= 5 && customText.length <= 20) {
-    addTask('OUTROS');
-    const marker = selectedCell.querySelector('.task-marker');
-    if (marker) {
-      marker.textContent = customText.substring(0, 10);
-      marker.setAttribute('data-full-text', customText);
-    }
-  }
-  closeCustomTextModal();
-}
-function closeCustomTextModal() {
-  document.getElementById('customTextModal').style.display = 'none';
-  document.getElementById('customTextInput').value = '';
-}
-function removeTask() {
-  if (!selectedCell) return;
-  const marker = selectedCell.querySelector('.task-marker');
-  if (marker) {
-    marker.remove();
-  }
-  document.getElementById('taskOptions').style.display = 'none';
-  saveState();
-}
-function toggleDarkMode() {
-  document.body.classList.toggle('dark-mode');
-  saveState();
-  location.reload();
-}
-function updateYear() {
-  const yearInput = document.getElementById('yearInput');
-  const newYear = parseInt(yearInput.value);
-  if (newYear >= 2024) {
-    currentYear = newYear;
-    generateCalendar();
-    saveState();
-    loadState();
-  } else {
-    alert('Por favor, insira um ano igual ou posterior a 2024');
-    yearInput.value = currentYear;
-  }
-}
-function updateMotivationalQuote() {
-  const quoteEl = document.getElementById('motivationalQuote');
-  const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
-  quoteEl.innerHTML = `<span>${randomQuote}</span>`;
-}
-document.addEventListener('click', event => {
-  const taskOptions = document.getElementById('taskOptions');
-  if (!event.target.closest('td') && !event.target.closest('.task-options')) {
-    taskOptions.style.display = 'none';
-  }
-});
-document.getElementById('prevMonth').addEventListener('click', () => {
-  if (currentMonth === 0) {
-    currentYear--;
-    currentMonth = 11;
-  } else {
-    currentMonth--;
-  }
-  generateCalendar();
-});
-document.getElementById('nextMonth').addEventListener('click', () => {
-  if (currentMonth === 11) {
-    currentYear++;
-    currentMonth = 0;
-  } else {
-    currentMonth++;
-  }
-  generateCalendar();
-});
-document.getElementById('teamSelect').addEventListener('change', function () {
-  const team = this.value;
-  highlightTeam(team);
-  saveState();
-});
+
 function saveState() {
   const state = {
     year: currentYear,
-    team: document.getElementById('teamSelect').value,
+    month: currentMonth,
+    team: selectedTeam,
     darkMode: document.body.classList.contains('dark-mode'),
     tasks: []
   };
+  
   document.querySelectorAll('td').forEach(cell => {
     const marker = cell.querySelector('.task-marker');
     if (marker) {
@@ -677,55 +518,269 @@ function saveState() {
       state.tasks.push(task);
     }
   });
+  
   const storageKey = getStorageKey(currentYear, currentMonth);
+  
+  // Save to localStorage for compatibility
   localStorage.setItem(storageKey, JSON.stringify(state));
+  
+  // Save global team selection
+  localStorage.setItem('selectedTeam', selectedTeam);
+  
+  // Also save to IndexedDB for offline support
+  if (db) {
+    const transaction = db.transaction([storeName], 'readwrite');
+    const store = transaction.objectStore(storeName);
+    store.put({
+      id: storageKey,
+      state: state
+    });
+  }
 }
+
 function loadState() {
+  // Only load team from storage the first time
   const storageKey = getStorageKey(currentYear, currentMonth);
-  const savedState = localStorage.getItem(storageKey);
-  if (savedState) {
-    const state = JSON.parse(savedState);
-    currentYear = state.year || new Date().getFullYear();
-    document.getElementById('yearInput').value = currentYear;
-    if (state.team) {
-      document.getElementById('teamSelect').value = state.team;
-      highlightTeam(state.team);
-    }
-    if (state.darkMode) {
-      document.body.classList.add('dark-mode');
-      document.querySelector('.dark-mode-toggle').textContent = '☀️';
-    }
-    if (state.tasks) {
-      state.tasks.forEach(task => {
-        if (task.year === currentYear && task.month === currentMonth) {
-          const rows = document.querySelectorAll('#calendarBody tr');
-          rows.forEach(row => {
-            if (row.cells[0].textContent === task.date) {
-              const cell = row.cells[task.cellIndex];
-              selectedCell = cell;
-              if (task.taskType.includes('OUTROS')) {
-                addTask('OUTROS');
-                const marker = cell.querySelector('.task-marker');
-                if (marker) {
-                  marker.textContent = task.taskType.replace('OUTROS:', '').toUpperCase();
-                  if (task.expanded) {
-                    marker.classList.add('expanded');
-                  }
-                }
-              } else {
-                addTask(task.taskType);
-                const marker = cell.querySelector('.task-marker');
-                if (marker && task.expanded) {
-                  marker.classList.add('expanded');
-                }
-              }
-            }
-          });
+  
+  if (db) {
+    const transaction = db.transaction([storeName], 'readonly');
+    const store = transaction.objectStore(storeName);
+    const request = store.get(storageKey);
+    
+    request.onsuccess = function(event) {
+      const result = event.target.result;
+      if (result) {
+        applyState(result.state);
+      } else {
+        // Fallback to localStorage
+        const savedState = localStorage.getItem(storageKey);
+        if (savedState) {
+          applyState(JSON.parse(savedState));
         }
-      });
+      }
+    };
+    
+    request.onerror = function() {
+      // Fallback to localStorage on error
+      const savedState = localStorage.getItem(storageKey);
+      if (savedState) {
+        applyState(JSON.parse(savedState));
+      }
+    };
+  } else {
+    // Fallback if IndexedDB isn't initialized
+    const savedState = localStorage.getItem(storageKey);
+    if (savedState) {
+      applyState(JSON.parse(savedState));
     }
   }
 }
+
+function applyState(state) {
+  if (!selectedTeam && state.team) {
+    selectedTeam = state.team;
+    document.getElementById('teamSelect').value = selectedTeam;
+  }
+  
+  highlightTeam(selectedTeam);
+  
+  if (state.tasks) {
+    state.tasks.forEach(task => {
+      if (task.year === currentYear && task.month === currentMonth) {
+        const rows = document.querySelectorAll('#calendarBody tr');
+        rows.forEach(row => {
+          if (row.cells[0].textContent === task.date) {
+            const cell = row.cells[task.cellIndex];
+            selectedCell = cell;
+            if (task.taskType.includes('OUTROS')) {
+              addTask('OUTROS');
+              const marker = cell.querySelector('.task-marker');
+              if (marker) {
+                marker.textContent = task.taskType;
+                if (task.expanded) {
+                  marker.classList.add('expanded');
+                }
+              }
+            } else {
+              addTask(task.taskType);
+              const marker = cell.querySelector('.task-marker');
+              if (marker && task.expanded) {
+                marker.classList.add('expanded');
+              }
+            }
+          }
+        });
+      }
+    });
+  }
+}
+
+function getDaysSinceBase(date) {
+  const targetDate = new Date(date);
+  const baseDate = new Date(2024, 0, 1);
+  const diffTime = targetDate - baseDate;
+  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+}
+
+function getTeams(date) {
+  const daysSinceBase = getDaysSinceBase(date);
+  return {
+    day: dayTeamSequence[daysSinceBase % 5],
+    night: nightTeamSequence[daysSinceBase % 5]
+  };
+}
+
+function generateCalendar() {
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const lastDay = new Date(currentYear, currentMonth + 1, 0);
+  const today = new Date();
+  document.getElementById('monthDisplay').textContent = `${months[currentMonth]} ${currentYear}`;
+  const tbody = document.getElementById('calendarBody');
+  tbody.innerHTML = '';
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const date = new Date(currentYear, currentMonth, day);
+    const teams = getTeams(date);
+    const row = document.createElement('tr');
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    const isToday = date.toDateString() === today.toDateString();
+    
+    // Using a pulsing class for today instead of just "today"
+    const todayClass = isToday ? 'class="today"' : '';
+    
+    const cells = [`<td ${todayClass}>${day}</td>`, `<td ${isWeekend ? 'class="weekend"' : ''}>${weekDays[date.getDay()]}</td>`, `<td onclick="showTaskOptions(event)">${teams.day}</td>`, `<td onclick="showTaskOptions(event)">${teams.night}</td>`];
+    row.innerHTML = cells.join('');
+    tbody.appendChild(row);
+    const dateStr = `${String(day).padStart(2, '0')}/${String(currentMonth + 1).padStart(2, '0')}`;
+    if (holidays[dateStr]) {
+      const watermark = document.createElement('div');
+      watermark.className = 'holiday-watermark';
+      watermark.textContent = holidays[dateStr];
+      row.cells[0].appendChild(watermark);
+    }
+  }
+  loadState();
+}
+
+function updateYear() {
+  const yearInput = document.getElementById('yearInput');
+  const newYear = parseInt(yearInput.value);
+  if (newYear >= 2024) {
+    currentYear = newYear;
+    generateCalendar();
+    saveState();
+    loadState();
+  } else {
+    alert('Por favor, insira um ano igual ou posterior a 2024');
+    yearInput.value = currentYear;
+  }
+}
+
+function showTaskOptions(event) {
+  const cell = event.target;
+  selectedCell = cell;
+  const taskOptions = document.getElementById('taskOptions');
+  const rect = cell.getBoundingClientRect();
+  taskOptions.style.display = 'block';
+  taskOptions.style.top = `${rect.bottom + window.scrollY}px`;
+  taskOptions.style.left = `${rect.left}px`;
+}
+
+function addTask(taskType) {
+  if (!selectedCell) return;
+  removeTask();
+  const marker = document.createElement('span');
+  marker.className = `task-marker task-${taskType.toLowerCase()}`;
+  marker.textContent = taskType;
+  if (taskType === 'OUTROS') {
+    marker.textContent = marker.textContent.substring(0, 10);
+  }
+  marker.addEventListener('dblclick', function () {
+    this.classList.toggle('expanded');
+  });
+  selectedCell.appendChild(marker);
+  document.getElementById('taskOptions').style.display = 'none';
+  saveState();
+}
+
+function showCustomTextInput() {
+  document.getElementById('taskOptions').style.display = 'none';
+  
+  // Pre-fill with last custom text if available
+  const lastCustomText = localStorage.getItem('lastCustomText') || '';
+  document.getElementById('customTextInput').value = lastCustomText;
+  
+  document.getElementById('customTextModal').style.display = 'block';
+  document.getElementById('customTextInput').focus();
+}
+
+function addCustomTask() {
+  const customText = document.getElementById('customTextInput').value.trim().toUpperCase();
+  if (customText && customText.length >= 5 && customText.length <= 20) {
+    if (!selectedCell) return;
+    removeTask();
+    const marker = document.createElement('span');
+    marker.className = `task-marker task-outros`;
+    marker.textContent = customText;
+    marker.addEventListener('dblclick', function () {
+      this.classList.toggle('expanded');
+    });
+    selectedCell.appendChild(marker);
+    document.getElementById('customTextModal').style.display = 'none';
+    document.getElementById('customTextInput').value = '';
+    saveState();
+    
+    // Store the custom text for persistence
+    localStorage.setItem('lastCustomText', customText);
+  }
+  closeCustomTextModal();
+}
+
+function closeCustomTextModal() {
+  document.getElementById('customTextModal').style.display = 'none';
+  document.getElementById('customTextInput').value = '';
+}
+
+function removeTask() {
+  if (!selectedCell) return;
+  const marker = selectedCell.querySelector('.task-marker');
+  if (marker) {
+    marker.remove();
+  }
+  document.getElementById('taskOptions').style.display = 'none';
+  saveState();
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
+  // Store dark mode preference in localStorage
+  localStorage.setItem('darkModeEnabled', document.body.classList.contains('dark-mode'));
+  saveState();
+  
+  // Auto-refresh 3 times with 1-second interval
+  let refreshCount = 0;
+  
+  function performRefresh() {
+    if (refreshCount < 3) {
+      setTimeout(() => {
+        location.reload();
+        refreshCount++;
+        if (refreshCount < 3) {
+          // Set a timeout to check when the page is loaded again
+          sessionStorage.setItem('pendingRefreshes', 3 - refreshCount);
+        }
+      }, 1000);
+    }
+  }
+  
+  performRefresh();
+}
+
+function updateMotivationalQuote() {
+  const quoteEl = document.getElementById('motivationalQuote');
+  const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+  quoteEl.innerHTML = `<span>${randomQuote}</span>`;
+}
+
 function highlightTeam(team) {
   document.querySelectorAll('.team-highlight').forEach(cell => {
     cell.classList.remove('team-highlight');
@@ -738,13 +793,81 @@ function highlightTeam(team) {
     });
   }
 }
+
+// Main application initialization and event listeners
 document.addEventListener('DOMContentLoaded', () => {
+  // Apply dark mode if saved in localStorage
+  if (localStorage.getItem('darkModeEnabled') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+  
+  // Load global team selection
+  const savedTeam = localStorage.getItem('selectedTeam');
+  if (savedTeam) {
+    selectedTeam = savedTeam;
+    document.getElementById('teamSelect').value = selectedTeam;
+  }
+  
   document.getElementById('yearInput').value = currentYear;
   generateCalendar();
   updateMotivationalQuote();
   setInterval(updateMotivationalQuote, 15000);
-  loadState();
+  
+  // Initialize IndexedDB
+  initDB().then(() => {
+    console.log("IndexedDB initialized successfully");
+  }).catch(error => {
+    console.error("Could not initialize IndexedDB:", error);
+    // Still continue with localStorage only
+  });
+  
+  // Check if we need to continue auto-refreshing
+  const pendingRefreshes = parseInt(sessionStorage.getItem('pendingRefreshes') || '0');
+  if (pendingRefreshes > 0) {
+    sessionStorage.setItem('pendingRefreshes', pendingRefreshes - 1);
+    
+    if (pendingRefreshes > 1) {
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    }
+  }
 });
+
+// Global event listeners
+document.addEventListener('click', event => {
+  const taskOptions = document.getElementById('taskOptions');
+  if (!event.target.closest('td') && !event.target.closest('.task-options')) {
+    taskOptions.style.display = 'none';
+  }
+});
+
+document.getElementById('prevMonth').addEventListener('click', () => {
+  if (currentMonth === 0) {
+    currentYear--;
+    currentMonth = 11;
+  } else {
+    currentMonth--;
+  }
+  generateCalendar();
+});
+
+document.getElementById('nextMonth').addEventListener('click', () => {
+  if (currentMonth === 11) {
+    currentYear++;
+    currentMonth = 0;
+  } else {
+    currentMonth++;
+  }
+  generateCalendar();
+});
+
+document.getElementById('teamSelect').addEventListener('change', function () {
+  selectedTeam = this.value;
+  highlightTeam(selectedTeam);
+  saveState();
+});
+
 document.getElementById('customTextInput').addEventListener('input', function () {
   const value = this.value.trim();
   if (value.length < 5) {
@@ -754,7 +877,7 @@ document.getElementById('customTextInput').addEventListener('input', function ()
   } else {
     this.setCustomValidity('');
   }
-});</script>
-
+});
+</script>
 </body>
 </html>
